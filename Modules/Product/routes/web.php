@@ -15,5 +15,4 @@ use Modules\Product\Http\Controllers\ProductController;
 */
 
 Route::group([], function () {
-    Route::resource('product', ProductController::class)->names('product');
 });

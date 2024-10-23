@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('sku')->nullable()->unique();
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2);
+            $table->integer('qty')->default(0);
             $table->enum('type', ['simple', 'configurable']);
             $table->timestamps();
             $table->softDeletes();
@@ -44,6 +45,8 @@ return new class extends Migration
             $table->foreignId('option_id')->constrained('configurable_product_options')->onDelete('cascade');
             $table->string('variant_name');
             $table->string('sku');
+            $table->integer('qty')->default(0);
+
             $table->decimal('price', 10, 2)->nullable();
             $table->timestamps();
             $table->softDeletes();

@@ -135,7 +135,7 @@ return [
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-//        App\Providers\HelperServiceProvider::class,
+        App\Providers\HelperServiceProvider::class,
 
     ])->toArray(),
 

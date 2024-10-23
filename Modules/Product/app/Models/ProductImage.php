@@ -17,7 +17,7 @@ class productImage extends Model
      * The attributes that are mass assignable.
      */
     protected $fillable = ['product_id','image_path'];
-
+    protected $hidden = ['created_at','updated_at','deleted_at'];
     public function product()
     {
         return $this->belongsTo(product::class, 'product_id');
