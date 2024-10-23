@@ -5,6 +5,7 @@ namespace Modules\Order\Http\Controllers;
 use App\Http\Controllers\Controller;
 use http\Client\Response;
 use Illuminate\Http\Request;
+use Modules\Order\Events\OrderPlaced;
 use Modules\Order\Models\Order;
 use Modules\Order\Models\OrderItem;
 use Modules\Product\Models\product;
@@ -51,6 +52,7 @@ class OrderController extends Controller
             'phone'=> auth()->user()->phone,
             'order_number'=>uniqid()]);
         $this->createOrderItems($order , $products);
+        $this->sendOrderMail($order);
         return $order;
     }
     public function createOrderItems($order , $products)
@@ -70,6 +72,7 @@ class OrderController extends Controller
         }
         $order->total = $orderTotal;
         $order->save();
+
         return $order;
     }
 
@@ -87,27 +90,15 @@ class OrderController extends Controller
         return returnApi(['status'=>1,'message'=>'','order'=>$order]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
+    public function sendOrderMail($order)
     {
-        return view('order::edit');
-    }
+        $email =  'admin@task.com';
+        $emailData = [
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
+            'name' => 'New Order Placed',
+            'order'=>$order
+        ];
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
-    {
-        //
+       return (event(new OrderPlaced($email,$emailData)));
     }
 }
