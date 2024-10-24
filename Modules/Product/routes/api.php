@@ -16,4 +16,5 @@ use Modules\Product\Http\Controllers\ProductController;
 
 Route::middleware(['auth:api'])->prefix('v1')->group(function () {
     Route::apiResource('product', ProductController::class)->names('product');
+    Route::post('product/image', [ProductController::class, 'image'])->name('product.image');
 });
