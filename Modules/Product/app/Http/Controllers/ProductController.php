@@ -13,24 +13,26 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
+
     public function index(Request $request)
-    {
-        $list = (product::where('status',1));
-        if($request->has('name')){
+        {
+            $cacheKey = 'products_list_' . md5(serialize($request->all()));
+            $list = \Cache::remember($cacheKey, 60, function () use ($request) {
+                $query = product::where('status', 1);
+                if ($request->has('name')) {
+                    $query = $query->where('name', 'like', '%' . $request->name . '%');
+                }
+                if ($request->has('min_price')) {
+                    $query = $query->where('price', '>=', $request->min_price);
+                }
+                if ($request->has('max_price')) {
+                    $query = $query->where('price', '<=', $request->max_price);
+                }
+                return $query->orderByDesc('id')->paginate(2);
+            });
 
-            $list= $list->where('name','like','%'.$request->name.'%');
+            return returnApi(['status' => 1, 'message' => '', 'list' => new ProductsCollection($list)]);
         }
-        if($request->has('min_price')){
-            $list= $list->where('price','>=', $request->min_price);
-        }
-         if($request->has('max_price')){
-            $list= $list->where('price','<=', $request->max_price);
-        }
-
-        $list= $list->orderByDesc('id')->paginate(2);
-
-        return returnApi(['status'=>1,'message'=>'','list'=>new ProductsCollection($list)]);
-    }
 
     /**
      * Show the form for creating a new resource.
