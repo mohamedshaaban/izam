@@ -44,7 +44,24 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $data = $request->all();
+        $validator = \Validator::make($data, [
+            'name' => 'required',
+            'sku' => 'required|unique:products,sku',
+            'description' => 'required',
+            'price' => 'required|numeric|min:0|not_in:0',
+            'qty' => 'required|numeric|min:0|not_in:0',
+        ]);
+
+        if ($validator->fails()) {
+            $responseArr = $validator->errors();;
+            return response()->json($validator->messages(), 422);
+
+        }
+        $product = product::create($data);
+
+        return returnApi(['success'=>'true','status'=>1,'message'=>'Product created successfully','product'=>$product]);
     }
 
     /**
