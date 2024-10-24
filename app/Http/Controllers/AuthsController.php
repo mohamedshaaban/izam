@@ -12,6 +12,31 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthsController extends Controller
 {
+    public function register(Request $request)
+    {
+        $requestData = $request->all();
+        $validator = Validator::make($requestData, [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $user = \App\Models\User::create([
+            'name' => $requestData['name'],
+            'email' => $requestData['email'],
+            'password' => Hash::make($requestData['password']),
+        ]);
+
+        $accessToken = $user->createToken('authToken')->accessToken;
+
+        return response(['user' => $user, 'access_token' => $accessToken], 201);
+    }
     public function login(Request $request)
     {
         $requestData = $request->all();
@@ -42,6 +67,7 @@ class AuthsController extends Controller
         $response = ['message' => 'You have been successfully logged out!'];
         return response($response, 200);
     }
+
 
 
 }
