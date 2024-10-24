@@ -15,7 +15,11 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      */
-
+    public function index(Request $request)
+    {
+        $orders = Order::where('user_id',auth()->id())->with(['orderitems','orderitems.product'])->orderByDesc('id')->paginate(2);
+        return returnApi(['status'=>1,'message'=>'','orders'=>$orders]);
+    }
     /**
      * Store a newly created resource in storage.
      */
