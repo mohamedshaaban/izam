@@ -69,6 +69,7 @@ class OrderController extends Controller
                 'qty'=>$product['qty'],
                 'total'=>$product['qty']* $productInfo->price
             ]);
+            $this->updateProductQty($product);
         }
         $order->total = $orderTotal;
         $order->save();
@@ -76,6 +77,10 @@ class OrderController extends Controller
         return $order;
     }
 
+    public function updateProductQty($product)
+    {
+        return product::where('id',$product['id'])->decrement('qty',$product['qty']);
+    }
     /**
      * Show the specified resource.
      */
