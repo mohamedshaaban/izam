@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\Product\Http\Resources\ProductsCollection;
 use Modules\Product\Models\product;
+use Modules\Product\Models\productImage;
 
 class ProductController extends Controller
 {
@@ -63,6 +64,24 @@ class ProductController extends Controller
 
         return returnApi(['success'=>'true','status'=>1,'message'=>'Product created successfully','product'=>$product]);
     }
+    public function image(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'product_id'=>'required|exists:products,id'
+        ]);
+
+        $imageName = time().'.'.$request->image->extension();
+
+        $request->image->move(public_path('images'), $imageName);
+        productImage::create([
+            'product_id'=>$request->product_id,
+            'image_path'=>'/images/'.$imageName
+        ]);
+
+        return returnApi(['status' => 1, 'message' => 'Image uploaded successfully', 'image' => $imageName]);
+    }
+
 
     /**
      * Show the specified resource.
@@ -95,4 +114,5 @@ class ProductController extends Controller
     {
         //
     }
+
 }
