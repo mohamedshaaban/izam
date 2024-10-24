@@ -22,9 +22,7 @@ class AuthsController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'errors' => $validator->errors()
-            ], 422);
+            return response()->json($validator->messages(), 422);
         }
 
         $user = \App\Models\User::create([
@@ -34,8 +32,8 @@ class AuthsController extends Controller
         ]);
 
         $accessToken = $user->createToken('authToken')->accessToken;
+        return returnApi(['success'=>'true','status'=>1,'message'=>'Product created successfully','user'=>$user,'access_token'=>$accessToken]);
 
-        return response(['user' => $user, 'access_token' => $accessToken], 201);
     }
     public function login(Request $request)
     {
