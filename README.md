@@ -16,6 +16,7 @@
 -composer install
 
 -php artisan migrate 
+
 -php artisan passport:client --personal
 
 -php artisan key:generate
